@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: webapp-node-port
+spec:
+  type: NodePort
+  ports:
+    # "port" can be used by any other pod that is trying to connect to our own pod this service points to.
+    # "targetPort" is the port exposed by the container in the pod this service points to.
+    # "nodePort" is the incoming port that the clients will use to reach the pod this service points to.
+    # nodePort should not be used in prod because we don't want clients screwing around with ports when making a request.
+    - port: 3050
+      targetPort: 3000
+      nodePort: 31515
+  selector: 
+    component: webapp

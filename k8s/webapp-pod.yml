@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: webapp-pod
+  # The label is used to link Service to a Pod.
+  # The key "component" is random. You could very well use "foo: bar" and use the same key value pair in Service to refer to this Pod.
+  labels:
+    component: webapp
+spec:
+  containers:
+    - name: client
+      image: vaibhavdesai137/multi-containers-workflow-webapp:latest
+      ports:
+        - containerPort: 3000
