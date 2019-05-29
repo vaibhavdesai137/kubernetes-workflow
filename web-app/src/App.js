@@ -6,7 +6,7 @@ import './App.css';
 class App extends Component {
 
   state = {
-    fibRequests: {},
+    fibRequests: [],
     fibResults: [],
     enteredIndex: ""
   };
@@ -19,13 +19,17 @@ class App extends Component {
   // Uses postgres
   async getFibRequests() {
     const response = await axios.get('/api/fibRequests');
-    this.setState({ fibRequests: response.data });
+    if (Array.isArray(response.data)) {
+      this.setState({ fibRequests: response.data });
+    }
   }
 
   // Uses redis
   async getFibResults() {
     const response = await axios.get('/api/fibResults');
-    this.setState({ fibResults: response.data });
+    if (response.data) {
+      this.setState({ fibResults: response.data });  
+    }
   }
 
   handleSubmit = async (event) => {
@@ -37,12 +41,13 @@ class App extends Component {
   }
 
   renderFibRequests() {
-    console.log(this.state.fibRequests);
     return this.state.fibRequests.map(({fib_idx}) => fib_idx).join(", ");
   }
 
   renderFibResults() {
+
     const entries = [];
+
     for(let key in this.state.fibResults) {
       entries.push(
         <div key={key}>
@@ -51,6 +56,7 @@ class App extends Component {
       );
     }
     return entries;
+
   }
 
   render() {
