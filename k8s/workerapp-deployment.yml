@@ -11,15 +11,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      component: myworkerapp-pod
+      component: workerapp-pod
   template:
     metadata:
       labels:
-        component: myworkerapp-pod
+        component: workerapp-pod
     spec:      
       containers:
         - name: workerapp-container
-          image: vaibhavdesai137/multi-containers-workflow-workerapp:latest
+          image: vaibhavdesai137/multi-containers-workflow-workerapp
           ports:
             - containerPort: 5000
 

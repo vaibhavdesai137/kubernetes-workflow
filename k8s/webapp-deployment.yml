@@ -6,15 +6,15 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      component: mywebapp-pod
+      component: webapp-pod
   template:
     metadata:
       labels:
-        component: mywebapp-pod
+        component: webapp-pod
     spec:      
       containers:
         - name: webapp-container
-          image: vaibhavdesai137/multi-containers-workflow-webapp:latest
+          image: vaibhavdesai137/multi-containers-workflow-webapp
           ports:
             - containerPort: 3000
 

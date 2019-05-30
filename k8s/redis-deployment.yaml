@@ -6,19 +6,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: apiapp-deployment
+  name: redis-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      component: apiapp-pod
+      component: redis-pod
   template:
     metadata:
       labels:
-        component: apiapp-pod
+        component: redis-pod
     spec:      
       containers:
-        - name: apiapp-container
-          image: vaibhavdesai137/multi-containers-workflow-apiapp
+        - name: redis-container
+          image: redis
           ports:
-            - containerPort: 5000
+            - containerPort: 6379

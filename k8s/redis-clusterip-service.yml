@@ -6,11 +6,11 @@
 apiVersion: v1
 kind: Service
 metadata: 
-  name: apiapp-clusterip-service
+  name: redis-clusterip-service
 spec:
   type: ClusterIP
   selector: 
-    component: apiapp-pod
+    component: redis-pod
   ports:
-    - port: 5000
-      targetPort: 5000  
+    - port: 6379
+      targetPort: 6379

@@ -1,0 +1,44 @@
+
+#
+# Refer to webapp-deployment.yml for explanation of some of the important keys
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: postgres-deployment
+spec:
+  # Do not blindly increase the replica size.
+  # Else, multiple postgres containers will end up using same volume.
+  # Think of it as a multi-master case.
+  # You don't want multiple postgres containers running without them knowing about each other &
+  # somehow getting them to work in master/slave fashion.
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres-pod
+  template:
+    metadata:
+      labels:
+        component: postgres-pod
+    spec:    
+      # We need persistent storage for postgres.
+      # Based on claimName, the corresponding claim config will be looked up
+      # and k8s will then assign the volumes accordingly 
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-persistent-volume-claim
+      containers:
+        - name: postgres-container
+          image: postgres
+          ports:
+            - containerPort: 5432
+          # Go to the "volumes" entry and find the one with the name "postgres-volume".
+          # Basically we are asking the container to use the volume we created/requested above.
+          # The mountPath value is the default one that postgres uses.
+          volumeMounts:
+            - name: postgres-volume
+              mountPath: /var/lib/postgresql/data
+              # Creates a sub folder that postgres cares about
+              subPath: postgres

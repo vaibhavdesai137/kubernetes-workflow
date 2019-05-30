@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   selector: 
-    component: mywebapp-pod
+    component: webapp-pod
   ports:
     # "port" can be used by any other pod that is trying to connect to our own pod this service points to.
     # "targetPort" is the port exposed by the container in the pod this service points to.

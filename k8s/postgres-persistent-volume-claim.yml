@@ -1,0 +1,22 @@
+
+#
+# This claim will need to be attached to a Ppod.
+# In our case, its the postgres-deployment.yml since we want persistence for postgres
+#
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: postgres-persistent-volume-claim
+spec:
+  accessModes:
+    # ReadWriteOnce -> read/write from a single node only
+    # ReadOnlyMany -> multiple nodes can read from this
+    # ReadWriteMany -> read/write from multiple nodes
+    - ReadWriteOnce
+  resources:
+    requests:
+      # if already provisioned, k8s will use that stoarge
+      # else k8s will dynamically provision a 1gb stoarge
+      # and then assign it to the pod
+      storage: 1Gi
