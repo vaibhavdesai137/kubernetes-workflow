@@ -3,17 +3,24 @@ kind: Deployment
 metadata: 
   name: webapp-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      component: webapp 
+      component: mywebapp-pod
   template:
     metadata:
       labels:
-        component: webapp
+        component: mywebapp-pod
     spec:      
       containers:
-        - name: webapp
+        - name: webapp-container
           image: vaibhavdesai137/multi-containers-workflow-webapp:latest
           ports:
             - containerPort: 3000
+
+# Used as:
+# kubectl apply -f webapp-deployment.yml
+
+# Going foward, we'll use "Deployment" kind and not "Pod" anymore
+# Because with "Deployment", we get to specify replicas, etc.
+# "Deployment" is declarative compared to "Pod" which is imperative i.e. you need to start/stop pods, etc. 

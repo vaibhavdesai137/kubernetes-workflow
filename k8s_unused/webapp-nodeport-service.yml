@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: webapp-nodeport-service
+spec:
+  type: NodePort
+  ports:
+    # "port" can be used by any other pod that is trying to connect to our own pod this service points to.
+    # "targetPort" is the port exposed by the container in the pod this service points to.
+    # "port" and "targetPort" can be different if you want different port for clients to connect to 
+    # but want this cluster to internally hit a different port on the containers.
+    # We'll just keep it same, less confusion that way.
+    # "nodePort" is the incoming port that the clients will use to reach the pod this service points to.
+    # nodePort should not be used in prod because we don't want clients screwing around with ports when making a request.
+    - port: 3000
+      targetPort: 3000
+      nodePort: 31515
+  selector: 
+    component: mywebapp-pod
+
+# Used as:
+# kubectl apply -f webapp-nodeport-service.yml
+
+# Going foward, we'll use the type "ClusterIP" and not "NodePort" anymore
+# NodePort is used when we want OUTSIDE access to our pods
+# With ClusterIP, access is restricted to the cluster only
+# For OUTSIDE access, ingress should be used

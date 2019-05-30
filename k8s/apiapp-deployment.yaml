@@ -1,0 +1,24 @@
+
+#
+# Refer to webapp-deployment.yml for explanation of some of the important keys
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: apiapp-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: myapiapp-pod
+  template:
+    metadata:
+      labels:
+        component: myapiapp-pod
+    spec:      
+      containers:
+        - name: apiapp-container
+          image: vaibhavdesai137/multi-containers-workflow-apiapp:latest
+          ports:
+            - containerPort: 5000
