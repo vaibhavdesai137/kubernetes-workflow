@@ -8,7 +8,7 @@ metadata:
     component: webapp
 spec:
   containers:
-    - name: client
+    - name: webapp
       image: vaibhavdesai137/multi-containers-workflow-webapp:latest
       ports:
         - containerPort: 3000
