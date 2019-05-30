@@ -26,17 +26,39 @@ spec:
             # These env vars are referenced in our workerapp image in keys.js
             # Using the name of the "Service" to reach the "redis" pod
             # Using the name of the "Service" to reach the "postgres" pod
+            # PG_PASSWORD ---> uses k8s secret
+            # Ideally, PG_DATABASE and PG_USER should use secrets too
             - name: REDIS_HOST
               value: redis-clusterip-service
             - name: REDIS_PORT
-              value: 6379
+              value: '6379'
             - name: PG_USER
               value: postgres
             - name: PG_PASSWORD
-              value: postgres-clusterip-service
+              valueFrom: 
+                secretKeyRef:
+                  name: pg-password-secret
+                  key: pg-password-secret-key
             - name: PG_DATABASE
               value: postgres
             - name: PG_HOST
-              value: 6379
+              value: postgres-clusterip-service
             - name: PG_PORT
-              value: 5432
+              value: '5432'
+
+#
+# Created the secret as:
+#
+# $ kubectl create secret generic <secret-name> --from-literal <key>=<value>
+# One secret can have multiple key values.
+# Hence, when using a secret, we need to specify the key as well that we want to use from that secret
+#
+# $ kubectl create secret generic pg-password-secret --from-literal pg-password-secret-key=postgres_test
+# secret/pg-password-secret created
+# $
+# $
+# $ kubectl get secrets
+# NAME                  TYPE                                  DATA   AGE
+# default-token-h7p65   kubernetes.io/service-account-token   3      5d23h
+# pg-password-secret    Opaque                                1      5s
+#

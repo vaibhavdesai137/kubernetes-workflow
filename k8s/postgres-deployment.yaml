@@ -42,3 +42,14 @@ spec:
               mountPath: /var/lib/postgresql/data
               # Creates a sub folder that postgres cares about
               subPath: postgres
+          # We are using secrets to store postgres password
+          # We are also overriding the default password when creating the secret
+          # Hence, we need to let the postgres container know about it
+          # Postgres container looks for "PGPASSWORD" env var to set the password on first start
+          # And for that env value, we are passing the secret
+          env:
+            - name: PGPASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: pg-password-secret
+                  key: pg-password-secret-key
