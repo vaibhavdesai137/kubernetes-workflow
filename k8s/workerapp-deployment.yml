@@ -1,0 +1,30 @@
+
+#
+# Refer to webapp-deployment.yml for explanation of some of the important keys
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: workerapp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: myworkerapp-pod
+  template:
+    metadata:
+      labels:
+        component: myworkerapp-pod
+    spec:      
+      containers:
+        - name: workerapp-container
+          image: vaibhavdesai137/multi-containers-workflow-workerapp:latest
+          ports:
+            - containerPort: 5000
+
+# 
+# Also, no other "Service" in pur cluster needs to talk to workerapp.
+# So, no "Service" is needed for this guy.
+# It simply gets events from postgres insert calls and updates redis after.
+#
