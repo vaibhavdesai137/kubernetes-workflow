@@ -20,9 +20,13 @@ spec:
       containers:
         - name: workerapp-container
           image: vaibhavdesai137/multi-containers-workflow-workerapp
-          ports:
-            - containerPort: 5000
-
+          env:
+            # These env vars are referenced in our workerapp image in keys.js
+            # Using the name of the "Service" to reach the redis pod
+            - name: REDIS_HOST
+              value: redis-clusterip-service
+            - name: REDIS_PORT
+              value: 6379
 # 
 # Also, no other "Service" in pur cluster needs to talk to workerapp.
 # So, no "Service" is needed for this guy.

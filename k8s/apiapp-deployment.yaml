@@ -22,3 +22,21 @@ spec:
           image: vaibhavdesai137/multi-containers-workflow-apiapp
           ports:
             - containerPort: 5000
+          env:
+            # These env vars are referenced in our workerapp image in keys.js
+            # Using the name of the "Service" to reach the "redis" pod
+            # Using the name of the "Service" to reach the "postgres" pod
+            - name: REDIS_HOST
+              value: redis-clusterip-service
+            - name: REDIS_PORT
+              value: 6379
+            - name: PG_USER
+              value: postgres
+            - name: PG_PASSWORD
+              value: postgres-clusterip-service
+            - name: PG_DATABASE
+              value: postgres
+            - name: PG_HOST
+              value: 6379
+            - name: PG_PORT
+              value: 5432
