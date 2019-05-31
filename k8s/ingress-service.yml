@@ -1,0 +1,47 @@
+
+#
+# Refer to ingress-nginx for details on this ingress config.
+#
+# We ran the following commands on local to get this going:
+#
+# ONE:
+# kubectl create namespace ingress-nginx
+#
+# TWO:
+# cat << EOF > kustomization.yaml
+# apiVersion: kustomize.config.k8s.io/v1beta1
+# kind: Kustomization
+# namespace: ingress-nginx
+# bases:
+# - github.com/kubernetes/ingress-nginx/deploy/cluster-wide
+# - # provider-specific, see below
+# EOF
+#
+# THREE:
+# minikube addons enable ingress
+#
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata: 
+  name: ingress-service
+  # additional configs for the Ingress object
+  annotations:
+    # this tell k8s that our ingress controller is based on nginx project
+    kubernetes.io/ingress.class: nginx
+    # this rule is for nginx itself
+    # if a call is made is to /api, this will rewrite it as just / to invoke our apiapp
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - http:
+        # Configure the 2 routing paths for our 2 apps (2 sets of pods)
+        paths:
+          - path: /?(.*)
+            backend:
+              serviceName: webapp-clusterip-service
+              servicePort: 3000
+          - path: /api/?(.*)
+            backend:
+              serviceName: apiapp-clusterip-service
+              servicePort: 5000
