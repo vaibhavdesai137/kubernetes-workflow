@@ -2,10 +2,7 @@ sudo: required
 services:
   - docker
 
-# Tag the image so we can refer it later since we cannot copy the image id returned by build command
-# Creating image only for web project to run tests
-# We should ideall run tests on all sub-projects
-
+#
 # No preconfigured travis image available that has google cloud cli installed.
 # Steps to setup our travis env:
 # 1. More on this below
@@ -13,7 +10,11 @@ services:
 # 3. Modify the shell by sourcing a file that gets downloaded with the CLI.
 # 4. Install kubectl in travis env
 # 5. Setup the auth for google cloud (think of IAM from AWS)
-
+# 6. Set the project name for gcloud (there cloud be multipe projects in your account)
+# 7. Set the zone name the cluster is created in
+# 8. Set the k8x cluster name for gcloud to know which k8s cluster to work with
+# 9. Login to docker (it uses env vars setup in travis)
+# 10. Create an image for the web-app project
 #
 # For #5, we have always used env variables but gcp needs an account json file.
 # We don't want to store the raw json file in travis or check-in to github.
@@ -36,10 +37,21 @@ services:
 # This encrypted version is safe to checkin created.
 # Delete the orginal travis-service-account.json
 #
-
 before_install:
   - openssl aes-256-cbc -K $encrypted_fa43a465cf42_key -iv $encrypted_fa43a465cf42_iv -in travis-service-account.json.enc -out travis-service-account.json -d
   - curl https://sdk.cloud.google.com | bash > /dev/null
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file travis-service-account.json
+  - gcloud config set project cellular-cider-242620
+  - gcloud config set compute/zone us-west1-a
+  - gcloud container clusters get-credentials kubernetes-workflow-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker build -t vaibhavdesai137/kubernetes-workflow-webapp -f ./web-app/Dockerfile.dev ./web-app
+
+# Use the hyphens to terminate tests else "npm run test" will wait for user inputs
+script:
+  # For whatever reason, travis hangs with this after executing tests
+  # - docker run vaibhavdesai137/kubernetes-workflow-webapp npm run test -- --coverage --forceExit
+  - docker run -e CI=true vaibhavdesai137/kubernetes-workflow-webapp npm run test -- --watchAll=false
+
