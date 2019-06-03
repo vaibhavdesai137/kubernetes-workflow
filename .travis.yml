@@ -1,0 +1,45 @@
+sudo: required
+services:
+  - docker
+
+# Tag the image so we can refer it later since we cannot copy the image id returned by build command
+# Creating image only for web project to run tests
+# We should ideall run tests on all sub-projects
+
+# No preconfigured travis image available that has google cloud cli installed.
+# Steps to setup our travis env:
+# 1. More on this below
+# 2. Install the google cloud cli.
+# 3. Modify the shell by sourcing a file that gets downloaded with the CLI.
+# 4. Install kubectl in travis env
+# 5. Setup the auth for google cloud (think of IAM from AWS)
+
+#
+# For #5, we have always used env variables but gcp needs an account json file.
+# We don't want to store the raw json file in travis or check-in to github.
+# So we'll ask travis to ENCRYPT the file for us using travis CLI.
+# The encrypted file can be safely checked-in.
+# We will then delete the original json file to avoid accidentally checking it in.
+# 
+# Steps to encrypt the file using travis and then using it in our CI:
+# It's hard to correctly setup ruby on windows (mac is easy).
+# To avoid dealing with this nonsense, we'l just use a ruby container.
+#
+# docker run -it -v $(pwd):/kubernetes-workflow ruby:2.3 sh
+# gem install travis
+# travis login
+# travis encrypt-file travis-service-account.json -r vaibhavdesai137/kubernetes-worflow --org
+#
+# Travis CLI should now thrown out a big "openssl..." cmd on the terminal and would have asked 
+# us to use it in the "before_install" step. 
+# Also, it should have created an ancrypyted version of our file travis-service-account.json.enc 
+# This encrypted version is safe to checkin created.
+# Delete the orginal travis-service-account.json
+#
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_fa43a465cf42_key -iv $encrypted_fa43a465cf42_iv -in travis-service-account.json.enc -out travis-service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file service-account.json
