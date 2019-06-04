@@ -7,3 +7,5 @@ Learning k8s
 - Storage
 - Ingress
 - etc.
+
+Build via Travis CI and auto deploy to GCP K8S cluster.
