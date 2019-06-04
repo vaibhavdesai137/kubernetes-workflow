@@ -3,6 +3,15 @@ services:
   - docker
 
 #
+# Global env vars willbe passed along to all scripts that travis invokes.
+# Our deploy.sh needs git SHAs to tag images
+# Also, disable all BS prompts coming from google cli
+#
+env:
+  global:
+    - GIT_SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1 
+#
 # No preconfigured travis image available that has google cloud cli installed.
 # Steps to setup our travis env:
 # 1. More on this below
@@ -55,3 +64,12 @@ script:
   # - docker run vaibhavdesai137/kubernetes-workflow-webapp npm run test -- --coverage --forceExit
   - docker run -e CI=true vaibhavdesai137/kubernetes-workflow-webapp npm run test -- --watchAll=false
 
+# Travis knew how to deploy to beanstalk
+# Unfortunately, it doesn't know how to do that for k8s
+# So we'll have to write some steps that travis will execute for us
+# Hence, the provider value is "script" instead of "elasticbeanstalk" like in previous docker example
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
