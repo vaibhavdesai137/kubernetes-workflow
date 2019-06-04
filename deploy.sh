@@ -39,6 +39,6 @@ kubectl apply -f k8s
 
 # Set images to use for each deployment so kubectl knows its needs to update the image in the pods
 # Without this step, new image will be available in dockerhub but kubectl won't knonw about it
-kubectl set image deployments/apiapp-deployment workerapp-container=vaibhavdesai137/kubernetes-workflow-workerapp:$GIT_SHA
+kubectl set image deployments/workerapp-deployment workerapp-container=vaibhavdesai137/kubernetes-workflow-workerapp:$GIT_SHA
 kubectl set image deployments/apiapp-deployment apiapp-container=vaibhavdesai137/kubernetes-workflow-apiapp:$GIT_SHA
-kubectl set image deployments/apiapp-deployment webapp-container=vaibhavdesai137/kubernetes-workflow-webapp:$GIT_SHA
+kubectl set image deployments/webapp-deployment webapp-container=vaibhavdesai137/kubernetes-workflow-webapp:$GIT_SHA
